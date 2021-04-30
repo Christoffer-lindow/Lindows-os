@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "idt/idt.h"
+#include "io/io.h"
+#include "memory/heap/kheap.h"
+
+
 uint16_t *video_mem = 0;
 uint16_t terminal_row = 0;
 uint16_t terminal_col = 0;
@@ -14,6 +18,7 @@ void terminal_putchar(int x, int y, char c, char color)
 {
     video_mem[(y * VGA_WIDTH) + x] = terminal_make_char(c, color);
 }
+
 
 bool terminal_newLine(char c)
 {
@@ -74,6 +79,9 @@ void kernel_main()
     terminal_initialize();
     print("Hello Lindows\nLinebreak");
 
+    // Initialize the heap
+    kheap_init();
     // Initialize interuppts
     idt_init();
+
 }
