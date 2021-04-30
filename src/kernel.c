@@ -81,7 +81,11 @@ void kernel_main()
 
     // Initialize the heap
     kheap_init();
+    
     // Initialize interuppts
     idt_init();
+
+    // Enable interrupts
+    enable_interrupts();
 
 }
