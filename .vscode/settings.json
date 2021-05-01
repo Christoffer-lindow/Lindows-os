@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "cstdint": "cpp",
-        "idt.h": "c"
+        "idt.h": "c",
+        "pparser.h": "c"
     }
 }
