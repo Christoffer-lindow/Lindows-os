@@ -24,7 +24,6 @@ void terminal_putchar(int x, int y, char c, char color)
     video_mem[(y * VGA_WIDTH) + x] = terminal_make_char(c, color);
 }
 
-
 bool terminal_newLine(char c)
 {
     if (c == '\n')
@@ -70,7 +69,7 @@ void print(const char *str)
     }
 }
 
-static struct paging_4gb_chunk* kernel_chunk = 0;
+static struct paging_4gb_chunk *kernel_chunk = 0;
 void kernel_main()
 {
     terminal_initialize();
@@ -81,7 +80,7 @@ void kernel_main()
 
     // Initialize filesystems
     fs_init();
-    
+
     // Search and initialize disks
     disk_search_and_init();
     // Initialize interuppts
@@ -96,7 +95,15 @@ void kernel_main()
     // Enable paging
     enable_paging();
 
-
     // Enable interrupts
     enable_interrupts();
+
+    int fd = fopen("0:/hello.txt", "r");
+    if (fd)
+    {
+        print("We opened hello.txt\n");
+    }
+    while (1)
+    {
+    }
 }

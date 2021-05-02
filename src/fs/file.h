@@ -10,7 +10,6 @@ enum
     SEEK_end
 };
 
-
 typedef unsigned int FILE_MODE;
 enum
 {
@@ -22,8 +21,8 @@ enum
 
 struct disk;
 
-typedef void*(*FS_OPEN_FUNCTION)(struct disk* disk, struct path_part* path, FILE_MODE mode);
-typedef int (*FS_RESOLVE_FUNCTION)(struct disk* disk);
+typedef void *(*FS_OPEN_FUNCTION)(struct disk *disk, struct path_part *path, FILE_MODE mode);
+typedef int (*FS_RESOLVE_FUNCTION)(struct disk *disk);
 
 struct filesystem
 {
@@ -36,15 +35,15 @@ struct filesystem
 struct file_descriptor
 {
     int index;
-    struct filesystem* filesystem;
-    void* private;
+    struct filesystem *filesystem;
+    void *private;
 
-    struct disk* disk;
+    struct disk *disk;
 };
 
 void fs_init();
-int fopen(const char* filename, const char* mode);
-void fs_insert_filesystem(struct filesystem* filesystem);
-struct filesystem* fs_resolve(struct disk* disk);
+int fopen(const char *filename, const char *mode_str);
+void fs_insert_filesystem(struct filesystem *filesystem);
+struct filesystem *fs_resolve(struct disk *disk);
 
 #endif

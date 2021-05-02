@@ -2,6 +2,7 @@
     "files.associations": {
         "cstdint": "cpp",
         "idt.h": "c",
-        "pparser.h": "c"
+        "pparser.h": "c",
+        "status.h": "c"
     }
 }
