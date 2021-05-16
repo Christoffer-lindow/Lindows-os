@@ -11,6 +11,10 @@
 #include "fs/pparser.h"
 #include "disk/streamer.h"
 #include "fs/file.h"
+#include "gdt/gdt.h"
+#include "config.h"
+#include "memory/memory.h"
+#include "task/tss.h"
 
 uint16_t *video_mem = 0;
 uint16_t terminal_row = 0;
@@ -77,10 +81,24 @@ void panic(const char* msg)
     while(1) {}
 }
 
+struct tss tss;
+struct gdt gdt_real[LINDOWS_TOTAL_GDT_SEGMENTS];
+struct gdt_structured gdt_structured[LINDOWS_TOTAL_GDT_SEGMENTS] = {
+    {.base = 0x00, .limit = 0x00, .type = 0x00 },
+    {.base = 0x00, .limit = 0xffffffff, .type = 0x9a},
+    {.base = 0x00, .limit = 0xffffffff, .type = 0x92},
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf8},
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf2},
+    {.base = (uint32_t) &tss, .limit=sizeof(tss), .type = 0xE9}
+};
 void kernel_main()
 {
     terminal_initialize();
     print("Hello Lindows\nLinebreak");
+
+    memset(gdt_real, 0x00, sizeof(gdt_real));
+    gdt_structured_to_gdt(gdt_real,gdt_structured, LINDOWS_TOTAL_GDT_SEGMENTS);
+    gdt_load(gdt_real, sizeof(gdt_real));
 
     // Initialize the heap
     kheap_init();
@@ -93,6 +111,12 @@ void kernel_main()
     // Initialize interuppts
     idt_init();
 
+    memset(&tss, 0x00, sizeof(tss));
+    tss.esp0 = 0x600000;
+    tss.ss0 = KERNEL_CODE_SELECTOR;
+
+    // Load the TSS
+    tss_load(0x28);
     // Setup paging
     kernel_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
 
